@@ -29,6 +29,7 @@ public class PathFindingVisualizer {
 	JLabel toolLabel = new JLabel("Tools");
 	JLabel l = new JLabel("Length   : "+length);
 	JLabel ch = new JLabel("Checks  : "+checks);
+	JLabel note = new JLabel("<html>Note: Movement is in only <br>up,down,right and left<br> directions</html>");
 	JPanel panel = new JPanel();
 	JButton searchButton=new JButton("Search");
 	JButton clearButton=new JButton("Clear");
@@ -78,6 +79,14 @@ public class PathFindingVisualizer {
 		panel.add(toolBx);
 		panel.revalidate();
 		panel.repaint();
+		JPanel subPane2 = new JPanel();
+		subPane2.setBorder(border);
+		subPane2.add(note);
+		
+		subPane2.setBounds(10, 350, 190, 70);
+		note.setBounds(50,390,150,50);
+		panel.add(subPane2);
+		
 		l.setBounds(30, 480, 180, 30);
 		panel.add(l);
 		ch.setBounds(30,520, 180, 30);
@@ -116,42 +125,42 @@ public class PathFindingVisualizer {
 		
 	}
 	public void Dijkstra() {
-		ArrayList<Node> priority = new ArrayList<Node>();	//CREATE A PRIORITY QUE
-		priority.add(map[startx][starty]);	//ADD THE START TO THE QUE
+		ArrayList<Node> priority = new ArrayList<Node>();	
+		priority.add(map[startx][starty]);	
 		while(flag) {
-			if(priority.size() < 1) {	//IF THE QUE IS 0 THEN NO PATH CAN BE FOUND
+			if(priority.size() < 1) {	
 				flag = false;
 				break;
 			}
-			int hops = priority.get(0).getHops()+1;	//INCREMENT THE HOPS VARIABLE
-			ArrayList<Node> explored = exploreNeighbors(priority.get(0), hops);	//CREATE AN ARRAYLIST OF NODES THAT WERE EXPLORED
+			int hops = priority.get(0).getHops()+1;	
+			ArrayList<Node> explored = exploreNeighbors(priority.get(0), hops);
 			if(explored.size() > 0) {
-				priority.remove(0);	//REMOVE THE NODE FROM THE QUE
-				priority.addAll(explored);	//ADD ALL THE NEW NODES TO THE QUE
+				priority.remove(0);	
+				priority.addAll(explored);	
 				l.setText("Length   : "+length);
 				ch.setText("Checks  : "+checks);
 				canvas.repaint();
 			
-			} else {	//IF NO NODES WERE EXPLORED THEN JUST REMOVE THE NODE FROM THE QUE
+			} else {	
 				priority.remove(0);
 			}
 				
 		}
 	}
 
-	public ArrayList<Node> exploreNeighbors(Node current, int hops) {	//EXPLORE NEIGHBORS
-		ArrayList<Node> explored = new ArrayList<Node>();	//LIST OF NODES THAT HAVE BEEN EXPLORED
+	public ArrayList<Node> exploreNeighbors(Node current, int hops) {	
+		ArrayList<Node> explored = new ArrayList<Node>();	
 		for(int a = -1; a <= 1; a++) {
 			for(int b = -1; b <= 1; b++) {
 				if(Math.abs(a)!=Math.abs(b)) {
 					int xbound = current.getX()+a;
 					int ybound = current.getY()+b;
 				
-				if((xbound > -1 && xbound < cells) && (ybound > -1 && ybound < cells)) {	//MAKES SURE THE NODE IS NOT OUTSIDE THE GRID
+				if((xbound > -1 && xbound < cells) && (ybound > -1 && ybound < cells)) {
 					Node neighbor = map[xbound][ybound];
-					if((neighbor.getHops()==-1 || neighbor.getHops() > hops) && neighbor.getcType()!=2) {	//CHECKS IF THE NODE IS NOT A WALL AND THAT IT HAS NOT BEEN EXPLORED
-						explore(neighbor, current.getX(), current.getY(), hops);	//EXPLORE THE NODE
-						explored.add(neighbor);	//ADD THE NODE TO THE LIST
+					if((neighbor.getHops()==-1 || neighbor.getHops() > hops) && neighbor.getcType()!=2) {	
+						explore(neighbor, current.getX(), current.getY(), hops);
+						explored.add(neighbor);	
 					}
 				}
 			}
@@ -160,19 +169,19 @@ public class PathFindingVisualizer {
 		return explored;
 	}
 	
-	public void explore(Node current, int lastx, int lasty, int hops) {	//EXPLORE A NODE
-		if(current.getcType()!=0 && current.getcType() != 1)	//CHECK THAT THE NODE IS NOT THE START OR FINISH
-			current.setcType(4);	//SET IT TO EXPLORED
-		current.setLNode(lastx, lasty);	//KEEP TRACK OF THE NODE THAT THIS NODE IS EXPLORED FROM
-		current.setHops(hops);	//SET THE HOPS FROM THE START
+	public void explore(Node current, int lastx, int lasty, int hops) {	
+		if(current.getcType()!=0 && current.getcType() != 1)
+			current.setcType(4);
+		current.setLNode(lastx, lasty);	
+		current.setHops(hops);	
 		checks++;
-		if(current.getcType() == 1) {	//IF THE NODE IS THE FINISH THEN BACKTRACK TO GET THE PATH
+		if(current.getcType() == 1) {	
 			backtrack(current.getLx(), current.getLy(),hops);
 		}
 	}
-	public void backtrack(int lx, int ly, int hops) {	//BACKTRACK
+	public void backtrack(int lx, int ly, int hops) {	
 		length = hops;
-		while(hops > 1) {	//BACKTRACK FROM THE END OF THE PATH TO THE START
+		while(hops > 1) {	
 			Node current = map[lx][ly];
 			current.setcType(5);
 			lx = current.getLx();
@@ -182,15 +191,15 @@ public class PathFindingVisualizer {
 		flag = false;
 	}
 	
-	public void clearMap() {	//CLEAR MAP
-		finishx = -1;	//RESET THE START AND FINISH
+	public void clearMap() {	
+		finishx = -1;	
 		finishy = -1;
 		startx = -1;
 		starty = -1;
-		map = new Node[cells][cells];	//CREATE NEW MAP OF NODES
+		map = new Node[cells][cells];
 		for(int i = 0; i < cells; i++) {
 			for(int j = 0; j < cells; j++) {
-				map[i][j] = new Node(3,i,j);	//SET ALL NODES TO EMPTY
+				map[i][j] = new Node(3,i,j);	
 			}
 		}
 		length = 0;
@@ -278,22 +287,22 @@ public class PathFindingVisualizer {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			// TODO Auto-generated method stub
-				//RESET THE MAP WHENEVER CLICKED
+				
 			try {
-				int i = e.getX()/csize;	//GET THE X AND Y OF THE MOUSE CLICK IN RELATION TO THE SIZE OF THE GRID
+				int i = e.getX()/csize;	
 				int j = e.getY()/csize;
 				Node current = map[i][j];
 				switch(tool ) {
-					case 0: {	//START NODE
-						if(current.getcType()!=2) {	//IF NOT WALL
-							if(startx > -1 && starty > -1) {	//IF START EXISTS SET IT TO EMPTY
+					case 0: {	
+						if(current.getcType()!=2) {
+							if(startx > -1 && starty > -1) {	
 								map[startx][starty].setcType(3);
 								map[startx][starty].setHops(-1);
 							}
 							current.setHops(0);
-							startx = i;	//SET THE START X AND Y
+							startx = i;	
 							starty = j;
-							current.setcType(0);	//SET THE NODE CLICKED TO BE START
+							current.setcType(0);	
 						}
 						break;
 					}
@@ -337,7 +346,7 @@ public class PathFindingVisualizer {
 	}
 	
 	class Node{
-		// 0 = start, 1 = finish, 2 = wall, 3 = empty, 4 = checked, 5 = finalpath
+		// -1 = not explored, 0 = start, 1 = finish, 2 = wall, 3 = empty, 4 = checked, 5 = finalpath
 		int cType;
 		int x;
 		int y;
