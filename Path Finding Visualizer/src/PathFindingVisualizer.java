@@ -346,7 +346,6 @@ public class PathFindingVisualizer {
 	}
 	
 	class Node{
-		// -1 = not explored, 0 = start, 1 = finish, 2 = wall, 3 = empty, 4 = checked, 5 = finalpath
 		int cType;
 		int x;
 		int y;
